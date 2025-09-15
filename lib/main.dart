@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           return Consumer<ThemeNotifier>(
               builder: (context, themeNotifier, child) {
                 return MaterialApp.router(
-                  title: 'Selavu-Expense Tracker',
+                  title: 'Selavu - Expense Tracker',
                   debugShowCheckedModeBanner: false,
                   routerConfig: appRouter,
                   theme: themeNotifier.appTheme,
