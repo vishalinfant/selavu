@@ -5,7 +5,7 @@ import 'package:selavu/services/category_services.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../models/category_model.dart';
-import '../../utils/app_colours.dart';
+import '../../core/constants/app_colours.dart';
 import '../widgets/custom_border.dart';
 
 class AddCategoryScreen extends StatefulWidget {

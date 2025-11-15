@@ -20,7 +20,8 @@ class CustomBorderButton extends StatelessWidget {
           vertical: 1.5.h
         ),
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor,)
+          border: Border.all(color: Theme.of(context).primaryColor,),
+          borderRadius: BorderRadius.circular(5.0)
         ),
         child: Center(
           child: Text(buttonLabel,

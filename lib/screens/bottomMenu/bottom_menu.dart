@@ -3,10 +3,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:selavu/screens/account/account_screen.dart';
 import 'package:selavu/screens/categories/categories_screen.dart';
 import 'package:selavu/screens/expenses/expenses_screen.dart';
-import 'package:selavu/utils/app_colours.dart';
+import 'package:selavu/core/constants/app_colours.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../utils/app_images.dart';
+import '../../core/constants/app_images.dart';
 import '../home/home_screen.dart';
 
 class BottomMenu extends StatefulWidget {
@@ -122,7 +122,7 @@ class BottomMenuState extends State<BottomMenu> {
           return Scaffold(
             body: screens.elementAt(selectedIndex),
             bottomNavigationBar: SizedBox(
-              height: 7.h,
+              height: 8.h,
               child: BottomNavigationBar(
                   currentIndex: selectedIndex,
                   onTap: (int index){

@@ -6,6 +6,7 @@ import 'package:selavu/screens/categories/components/category_list_item.dart';
 import 'package:selavu/screens/widgets/custom_border_button.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../core/routes/route_names.dart';
 import '../../services/category_services.dart';
 import '../bottomMenu/bottom_menu.dart';
 import '../widgets/custom_button.dart';
@@ -75,7 +76,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       return CategoryListItem(
                           categoryName: category.name,
                         onPressed: (){
-                          context.push("/categoryBasedExpensesScreen",
+                          context.push(RouteNames.categoryBasedExpensesScreen,
                               extra: {
                                 "category": category.name
                               });
@@ -89,7 +90,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 : CustomBorderButton(
                     buttonLabel: "Manage Category",
                     onPressed: () async{
-                      await context.push("/manageCategoryScreen");
+                      await context.push(RouteNames.manageCategoryScreen);
                       getCategories();
                     },
                     enable: true

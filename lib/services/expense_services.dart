@@ -98,6 +98,25 @@ class ExpenseService {
   };
  }
 
+ /// Get expenses filtered by category and a specific date, and calculate total amount
+ Future<Map<String, dynamic>> getExpensesByCategoryAndMonth(
+     String category, int year, int month) async {
+  final box = await _box;
+  List<Expense> expenses = box.values
+      .where((expense) =>
+  expense.category == category &&
+      expense.date.year == year &&
+      expense.date.month == month)
+      .toList();
+
+  double totalAmount = expenses.fold(0, (sum, item) => sum + item.amount);
+
+  return {
+   "expenses": expenses,
+   "totalAmount": totalAmount,
+  };
+ }
+
  /// Delete an expense using its unique ID
  Future<bool> deleteExpense(String id) async {
   final box = await _box;
@@ -119,5 +138,24 @@ class ExpenseService {
       .fold(0, (sum, expense) => sum + expense.amount);
 
   return totalAmount;
+ }
+
+ /// Get total expense amount for a specific year and month
+ Future<Map<String, dynamic>> getTotalExpenseForMonth(int year, int month) async {
+  final box = await _box;
+  List<Expense> expenses = box.values
+      .where((expense) =>
+  expense.date.year == year &&
+      expense.date.month == month)
+      .toList();
+  double totalAmount = box.values
+      .where((expense) =>
+  expense.date.year == year && expense.date.month == month)
+      .fold(0.0, (sum, expense) => sum + expense.amount);
+
+  return {
+   "expenses": expenses,
+   "totalAmount": totalAmount,
+  };
  }
 }

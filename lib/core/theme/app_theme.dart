@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:selavu/utils/app_colours.dart';
+import 'package:selavu/core/constants/app_colours.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
@@ -46,6 +46,7 @@ class ThemeNotifier extends ChangeNotifier {
   }
 
   final ThemeData appTheme = ThemeData(
+    scaffoldBackgroundColor: const Color(0xffF4F6F8),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       selectedItemColor: const Color(0xff6953F7),
       unselectedItemColor: secondaryTextColor,
@@ -62,7 +63,6 @@ class ThemeNotifier extends ChangeNotifier {
           fontWeight: FontWeight.w500
       ),
     ),
-    scaffoldBackgroundColor: const Color(0xffF0F2F7),
     primaryColor: const Color(0xff6953F7),
     secondaryHeaderColor: const Color(0xffFFB300),
     progressIndicatorTheme: const ProgressIndicatorThemeData(

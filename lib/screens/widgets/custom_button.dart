@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selavu/screens/widgets/custom_border.dart';
-import 'package:selavu/utils/app_colours.dart';
+import 'package:selavu/core/constants/app_colours.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomButton extends StatelessWidget {
@@ -23,6 +23,7 @@ class CustomButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: blackColour,
+          borderRadius: BorderRadius.circular(5.0)
           // border: shadowButtonBorder(context)
         ),
         child: Center(

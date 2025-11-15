@@ -3,15 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:selavu/models/category_model.dart';
-import 'package:selavu/utils/app_colours.dart';
-import 'package:selavu/utils/app_routes.dart';
-import 'package:selavu/utils/app_theme.dart';
+import 'package:selavu/core/constants/app_colours.dart';
+import 'package:selavu/core/routes/app_routes.dart';
+import 'package:selavu/core/theme/app_theme.dart';
+import 'package:selavu/services/notification_service.dart';
 import 'package:sizer/sizer.dart';
 
 import 'models/expense_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: blackColour, // 👈 your custom color
@@ -40,12 +42,14 @@ class MyApp extends StatelessWidget {
         builder: (context, orientation, screenType) {
           return Consumer<ThemeNotifier>(
               builder: (context, themeNotifier, child) {
-                return MaterialApp.router(
-                  title: 'Selavu - Expense Tracker',
-                  debugShowCheckedModeBanner: false,
-                  routerConfig: appRouter,
-                  theme: themeNotifier.appTheme,
-                  themeMode: themeNotifier.themeMode,
+                return SafeArea(
+                  child: MaterialApp.router(
+                    title: 'Selavu - Expense Tracker',
+                    debugShowCheckedModeBanner: false,
+                    routerConfig: appRouter,
+                    theme: themeNotifier.appTheme,
+                    themeMode: themeNotifier.themeMode,
+                  ),
                 );
               }
           );

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:selavu/utils/app_colours.dart';
-import 'package:selavu/utils/app_images.dart';
+import 'package:selavu/core/constants/app_colours.dart';
+import 'package:selavu/core/constants/app_images.dart';
 import 'package:sizer/sizer.dart';
+
+import '../core/routes/route_names.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 // FlutterLocalNotificationsPlugin();
@@ -23,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   routeToHome() async {
     await Hive.initFlutter();
     Timer(const Duration(seconds: 2), () async {
-      context.push("/bottomMenu");
+      context.go(RouteNames.bottomMenu);
     });
   }
 

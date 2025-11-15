@@ -20,11 +20,15 @@ class Expense extends HiveObject {
   @HiveField(4)
   final String description;
 
+  @HiveField(5)
+  final String salary;
+
   Expense({
     String? id,
     required this.amount,
     required this.category,
     required this.date,
     required this.description,
+    required this.salary
   }): id = id ?? const Uuid().v4();
 }

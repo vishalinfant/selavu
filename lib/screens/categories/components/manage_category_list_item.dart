@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:selavu/utils/app_colours.dart';
+import 'package:selavu/core/constants/app_colours.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/custom_border.dart';

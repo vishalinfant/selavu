@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../models/category_model.dart';
 import '../../services/category_services.dart';
-import '../../utils/app_colours.dart';
+import '../../core/constants/app_colours.dart';
 import 'components/manage_category_list_item.dart';
 import 'components/suggested_category_list_item.dart';
 

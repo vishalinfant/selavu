@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../utils/app_colours.dart';
+import '../../core/constants/app_colours.dart';
 
 class DeleteExpenseSheet extends StatefulWidget {
   const DeleteExpenseSheet({super.key});

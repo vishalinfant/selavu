@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:selavu/models/expense_model.dart';
 import 'package:selavu/screens/widgets/custom_border.dart';
-import 'package:selavu/utils/app_colours.dart';
-import 'package:selavu/utils/app_strings.dart';
+import 'package:selavu/core/constants/app_colours.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../../core/constants/app_strings.dart';
 
 class ExpenseListItem extends StatelessWidget {
   final Expense expense;

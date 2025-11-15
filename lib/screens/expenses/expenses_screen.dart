@@ -4,14 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:selavu/screens/expenses/components/expense_list_item.dart';
 import 'package:selavu/screens/widgets/custom_button.dart';
-import 'package:selavu/utils/app_strings.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../core/constants/app_strings.dart';
+import '../../core/routes/route_names.dart';
 import '../../models/category_model.dart';
 import '../../models/expense_model.dart';
 import '../../services/category_services.dart';
 import '../../services/expense_services.dart';
-import '../../utils/app_colours.dart';
+import '../../core/constants/app_colours.dart';
 import '../bottomMenu/bottom_menu.dart';
 import '../widgets/custom_border.dart';
 import 'delete_expense_sheet.dart';
@@ -33,6 +34,42 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
   String? selectedCategory, selectedDate;
   DateTime? expenseDate;
+  DateTime? selectedMonth;
+  String? selectedMonthString;
+  String? selectedValue;
+
+  static const List<String> _monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  Future<void> _pickMonthYear() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedMonth ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      helpText: 'Select Month and Year', // Custom text
+    );
+
+    if (picked != null) {
+      setState(() {
+        // We only care about year & month
+        selectedMonth = DateTime(picked.year, picked.month);
+        selectedMonthString = "${_monthNames[picked.month - 1]} ${picked.year}";
+      });
+    }
+  }
 
   getExpenses() async{
     final list = await expenseService.getAllExpenses();
@@ -117,6 +154,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                 selectedDate = null;
                                 expenseDate = null;
                                 totalAmount = null;
+                                selectedMonth = null;
+                                selectedMonthString = null;
+                                selectedValue = null;
                               });
                               getExpenses();
                             },
@@ -130,112 +170,366 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                         ],
                       ],
                     ),
-                    Column(
-                      spacing: 1.5.h,
-                      children: [
-                        Row(
-                          spacing: 3.w,
-                          children: [
-                            Expanded(
-                              child: Container(
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 3.w,
+                      ),
+                      decoration: BoxDecoration(
+                          color: whiteColour,
+                          border: shadowBorder(context)
+                      ),
+                      child: DropdownButton<String>(
+                        value: selectedValue,
+                        underline: const SizedBox.shrink(),
+                        isExpanded: true,
+                        hint: Text('Filter',
+                          style: Theme.of(context).textTheme.bodyMedium,),
+                        items: [
+                          DropdownMenuItem(
+                            value: "category",
+                            child: Text("Category", style: Theme.of(context).textTheme.bodyMedium,),
+                          ),
+                          DropdownMenuItem(
+                            value: "date",
+                            child: Text("Date", style: Theme.of(context).textTheme.bodyMedium,),
+                          ),
+                          DropdownMenuItem(
+                            value: "month",
+                            child: Text("Month", style: Theme.of(context).textTheme.bodyMedium,),
+                          ),
+                          DropdownMenuItem(
+                            value: "cd",
+                            child: Text("Category & Date", style: Theme.of(context).textTheme.bodyMedium,),
+                          ),
+                          DropdownMenuItem(
+                            value: "cm",
+                            child: Text("Category & Month", style: Theme.of(context).textTheme.bodyMedium,),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValue = value;
+                          });
+                          if(selectedValue == "category"){
+                            setState(() {
+                              selectedDate = null;
+                              selectedMonth = null;
+                            });
+                          } else if(selectedValue == "date"){
+                            setState(() {
+                              selectedCategory = null;
+                              selectedMonth = null;
+                            });
+                          } else if(selectedValue == "month"){
+                            setState(() {
+                              selectedCategory = null;
+                              selectedDate = null;
+                            });
+                          } else if(selectedValue == "cd"){
+                            setState(() {
+                              selectedCategory = null;
+                              selectedDate = null;
+                              selectedMonth = null;
+                            });
+                          } else if(selectedValue == "cm"){
+                            setState(() {
+                              selectedCategory = null;
+                              selectedDate = null;
+                              selectedMonth = null;
+                              selectedMonthString = null;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    if(selectedValue == "category")...[
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 3.w,
+                        ),
+                        decoration: BoxDecoration(
+                            color: whiteColour,
+                            border: shadowBorder(context)
+                        ),
+                        child: DropdownButton<String>(
+                          value: selectedCategory,
+                          hint: Text('Select category',
+                            style: Theme.of(context).textTheme.bodyMedium,),
+                          underline: const SizedBox.shrink(),
+                          isExpanded: true,
+                          icon: Icon(Icons.arrow_drop_down, size: 4.w,),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCategory = value;
+                            });
+                          },
+                          items: categories.map<DropdownMenuItem<String>>((Category value) {
+                            return DropdownMenuItem<String>( // Correct the type here
+                              value: value.name.toString(), // value is a String
+                              child: Text(
+                                value.name.toString(),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ] else if(selectedValue == "date")...[
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 3.w,
+                          ),
+                          decoration: BoxDecoration(
+                              color: whiteColour,
+                              border: shadowBorder(context)
+                          ),
+                          child: Row(
+                            spacing: 3.w,
+                            children: [
+                              Expanded(
+                                child: Text(selectedDate ?? "Select date",
+                                  style: Theme.of(context).textTheme.bodyMedium,),
+                              ),
+                              IconButton(
+                                onPressed: (){
+                                  _selectDate(context);
+                                },
+                                icon: Icon(Icons.calendar_month_outlined, color: Theme.of(context).secondaryHeaderColor, size: 5.w,),
+                              ),
+                            ],
+                          )
+                      ),
+                    ] else if(selectedValue == "month")...[
+                      Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 3.w,
+                          ),
+                          decoration: BoxDecoration(
+                              color: whiteColour,
+                              border: shadowBorder(context)
+                          ),
+                          child: Row(
+                            spacing: 3.w,
+                            children: [
+                              Expanded(
+                                child: Text(selectedMonthString ?? "Select month",
+                                  style: Theme.of(context).textTheme.bodyMedium,),
+                              ),
+                              IconButton(
+                                onPressed: (){
+                                  _pickMonthYear();
+                                },
+                                icon: Icon(Icons.calendar_month_outlined, color: Theme.of(context).secondaryHeaderColor, size: 5.w,),
+                              ),
+                            ],
+                          )
+                      ),
+                    ] else if(selectedValue == "cm")...[
+                      Row(
+                        spacing: 3.w,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 3.w,
+                              ),
+                              decoration: BoxDecoration(
+                                  color: whiteColour,
+                                  border: shadowBorder(context)
+                              ),
+                              child: DropdownButton<String>(
+                                value: selectedCategory,
+                                hint: Text('Select category',
+                                  style: Theme.of(context).textTheme.bodyMedium,),
+                                underline: const SizedBox.shrink(),
+                                isExpanded: true,
+                                icon: Icon(Icons.arrow_drop_down, size: 4.w,),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedCategory = value;
+                                  });
+                                },
+                                items: categories.map<DropdownMenuItem<String>>((Category value) {
+                                  return DropdownMenuItem<String>( // Correct the type here
+                                    value: value.name.toString(), // value is a String
+                                    child: Text(
+                                      value.name.toString(),
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 3.w,
+                                  horizontal: 3.w,
                                 ),
                                 decoration: BoxDecoration(
                                     color: whiteColour,
                                     border: shadowBorder(context)
                                 ),
-                                child: DropdownButton<String>(
-                                  value: selectedCategory,
-                                  hint: Text('Select category',
-                                    style: Theme.of(context).textTheme.bodyMedium,),
-                                  underline: const SizedBox.shrink(),
-                                  isExpanded: true,
-                                  icon: Icon(Icons.arrow_drop_down, size: 4.w,),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedCategory = value;
-                                    });
-                                  },
-                                  items: categories.map<DropdownMenuItem<String>>((Category value) {
-                                    return DropdownMenuItem<String>( // Correct the type here
-                                      value: value.name.toString(), // value is a String
-                                      child: Text(
-                                        value.name.toString(),
-                                        style: Theme.of(context).textTheme.bodyMedium,
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                                child: Row(
+                                  spacing: 3.w,
+                                  children: [
+                                    Expanded(
+                                      child: Text(selectedMonthString ?? "Select month",
+                                        style: Theme.of(context).textTheme.bodyMedium,),
+                                    ),
+                                    IconButton(
+                                      onPressed: (){
+                                        _pickMonthYear();
+                                      },
+                                      icon: Icon(Icons.calendar_month_outlined, color: Theme.of(context).secondaryHeaderColor, size: 5.w,),
+                                    ),
+                                  ],
+                                )
                             ),
-                            Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 3.w,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: whiteColour,
-                                      border: shadowBorder(context)
-                                  ),
-                                  child: Row(
-                                    spacing: 3.w,
-                                    children: [
-                                      Expanded(
-                                        child: Text(selectedDate ?? "Select date",
-                                          style: Theme.of(context).textTheme.bodyMedium,),
-                                      ),
-                                      IconButton(
-                                        onPressed: (){
-                                          _selectDate(context);
-                                        },
-                                        icon: Icon(Icons.calendar_month_outlined, color: Theme.of(context).secondaryHeaderColor, size: 5.w,),
-                                      ),
-                                    ],
-                                  )
-                              ),
-                            ),
-                          ],
-                        ),
-                        if(selectedCategory != null && selectedDate != null)...[
-                          CustomButton(
-                              buttonLabel: "Filter expenses",
-                              onPressed: () async {
-                                final list = await expenseService.getExpensesByCategoryAndDate(selectedCategory.toString(), expenseDate!);
-                                setState(() {
-                                  expenses = list["expenses"];
-                                  totalAmount = list["totalAmount"];
-                                });
-                              },
-                              enable: true
-                          ),
-                        ] else if(selectedCategory != null)...[
-                          CustomButton(
-                              buttonLabel: "Filter expense by category",
-                              onPressed: () async {
-                                final list = await expenseService.getExpensesByCategory(selectedCategory.toString());
-                                setState(() {
-                                  expenses = list["expenses"];
-                                  totalAmount = list["totalAmount"];
-                                });
-                              },
-                              enable: true
-                          ),
-                        ] else if(selectedDate != null)...[
-                          CustomButton(
-                              buttonLabel: "Filter expense by date",
-                              onPressed: () async {
-                                final list = await expenseService.getExpensesByDate(expenseDate!);
-                                setState(() {
-                                  expenses = list["expenses"];
-                                  totalAmount = list["totalAmount"];
-                                });
-                              },
-                              enable: true
                           ),
                         ],
-                      ],
-                    ),
+                      ),
+                    ] else if(selectedValue == "cd")...[
+                      Row(
+                        spacing: 3.w,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 3.w,
+                              ),
+                              decoration: BoxDecoration(
+                                  color: whiteColour,
+                                  border: shadowBorder(context)
+                              ),
+                              child: DropdownButton<String>(
+                                value: selectedCategory,
+                                hint: Text('Select category',
+                                  style: Theme.of(context).textTheme.bodyMedium,),
+                                underline: const SizedBox.shrink(),
+                                isExpanded: true,
+                                icon: Icon(Icons.arrow_drop_down, size: 4.w,),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedCategory = value;
+                                  });
+                                },
+                                items: categories.map<DropdownMenuItem<String>>((Category value) {
+                                  return DropdownMenuItem<String>( // Correct the type here
+                                    value: value.name.toString(), // value is a String
+                                    child: Text(
+                                      value.name.toString(),
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3.w,
+                                ),
+                                decoration: BoxDecoration(
+                                    color: whiteColour,
+                                    border: shadowBorder(context)
+                                ),
+                                child: Row(
+                                  spacing: 3.w,
+                                  children: [
+                                    Expanded(
+                                      child: Text(selectedDate ?? "Select date",
+                                        style: Theme.of(context).textTheme.bodyMedium,),
+                                    ),
+                                    IconButton(
+                                      onPressed: (){
+                                        _selectDate(context);
+                                      },
+                                      icon: Icon(Icons.calendar_month_outlined, color: Theme.of(context).secondaryHeaderColor, size: 5.w,),
+                                    ),
+                                  ],
+                                )
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    // if(selectedCategory != null && selectedDate != null)...[
+                    //   CustomButton(
+                    //       buttonLabel: "Filter expenses",
+                    //       onPressed: () async {
+                    //         final list = await expenseService.getExpensesByCategoryAndDate(selectedCategory.toString(), expenseDate!);
+                    //         setState(() {
+                    //           expenses = list["expenses"];
+                    //           totalAmount = list["totalAmount"];
+                    //         });
+                    //       },
+                    //       enable: true
+                    //   ),
+                    // ]
+                    if(selectedCategory != null && selectedDate != null)...[
+                      CustomButton(
+                          buttonLabel: "Filter expense by Category & Date",
+                          onPressed: () async {
+                            final list = await expenseService.getExpensesByCategoryAndDate(selectedCategory.toString(), expenseDate!);
+                            setState(() {
+                              expenses = list["expenses"];
+                              totalAmount = list["totalAmount"];
+                            });
+                          },
+                          enable: true
+                      ),
+                    ] else if(selectedCategory != null && selectedMonth != null)...[
+                      CustomButton(
+                          buttonLabel: "Filter expense by Category & Month",
+                          onPressed: () async {
+                            final list = await expenseService.getExpensesByCategoryAndMonth(selectedCategory.toString(), selectedMonth!.year, selectedMonth!.month);
+                            setState(() {
+                              expenses = list["expenses"];
+                              totalAmount = list["totalAmount"];
+                            });
+                          },
+                          enable: true
+                      ),
+                    ] else if(selectedCategory != null)...[
+                      CustomButton(
+                          buttonLabel: "Filter expense by Category",
+                          onPressed: () async {
+                            final list = await expenseService.getExpensesByCategory(selectedCategory.toString());
+                            setState(() {
+                              expenses = list["expenses"];
+                              totalAmount = list["totalAmount"];
+                            });
+                          },
+                          enable: true
+                      ),
+                    ] else if(selectedDate != null)...[
+                      CustomButton(
+                          buttonLabel: "Filter expense by Date",
+                          onPressed: () async {
+                            final list = await expenseService.getExpensesByDate(expenseDate!);
+                            setState(() {
+                              expenses = list["expenses"];
+                              totalAmount = list["totalAmount"];
+                            });
+                          },
+                          enable: true
+                      ),
+                    ] else if(selectedMonth != null)...[
+                      CustomButton(
+                          buttonLabel: "Filter expense by Month",
+                          onPressed: () async {
+                            final list = await expenseService.getTotalExpenseForMonth(selectedMonth!.year, selectedMonth!.month);
+                            setState(() {
+                              expenses = list["expenses"];
+                              totalAmount = list["totalAmount"];
+                            });
+                          },
+                          enable: true
+                      ),
+                    ],
                     if(totalAmount != null)...[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +615,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).secondaryHeaderColor,
           onPressed: (){
-            context.push("/addExpenseScreen")
+            context.push(RouteNames.addExpenseScreen)
             .then((result){
               if(result is bool){
                 getExpenses();

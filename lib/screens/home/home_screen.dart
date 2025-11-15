@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animator/widgets/fading_entrances/fade_in.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selavu/services/expense_services.dart';
-import 'package:selavu/utils/app_colours.dart';
-import 'package:selavu/utils/app_images.dart';
-import 'package:selavu/utils/app_strings.dart';
+import 'package:selavu/core/constants/app_colours.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../core/constants/app_strings.dart';
+import '../../core/routes/route_names.dart';
 import '../../models/category_model.dart';
 import '../../models/expense_model.dart';
 import '../../services/category_services.dart';
@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, constraints) {
         bool isWeb = constraints.maxWidth > 800;
         return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SafeArea(
             child: Column(
               children: [
@@ -204,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           vertical: 2.5.h
                       ),
                       decoration: BoxDecoration(
-                        color: whiteColour,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -227,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return CategoryListItem(
                                         categoryName: category.name,
                                         onPressed: () async{
-                                          await context.push("/categoryBasedExpensesScreen",
+                                          await context.push(RouteNames.categoryBasedExpensesScreen,
                                               extra: {
                                                 "category": category.name
                                               });
@@ -336,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return FloatingActionButton(
                 backgroundColor: Theme.of(context).secondaryHeaderColor,
                   onPressed: (){
-                    context.push("/addExpenseScreen").then((result){
+                    context.push(RouteNames.addExpenseScreen).then((result){
                       if(result is bool){
                         getExpenses();
                       }

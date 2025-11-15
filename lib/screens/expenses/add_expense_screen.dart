@@ -7,10 +7,11 @@ import 'package:selavu/screens/widgets/custom_button.dart';
 import 'package:selavu/screens/widgets/error_toast_message.dart';
 import 'package:selavu/services/category_services.dart';
 import 'package:selavu/services/expense_services.dart';
-import 'package:selavu/utils/app_colours.dart';
-import 'package:selavu/utils/app_strings.dart';
+import 'package:selavu/core/constants/app_colours.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../core/constants/app_strings.dart';
 import '../../models/category_model.dart';
 import '../../models/expense_model.dart';
 import '../categories/add_category_screen.dart';
@@ -99,7 +100,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 2.w,
-                                      vertical: 1.h
                                     ),
                                     decoration: BoxDecoration(
                                       color: whiteColour,
@@ -124,14 +124,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                       cursorColor: Theme.of(context).primaryColor,
                                       textAlignVertical: TextAlignVertical.center,
                                       decoration: InputDecoration(
-                                        prefixText: "$rupeeSymbol ",
-                                        prefixStyle: Theme.of(context).textTheme.titleMedium,
-                                        labelText: "Amount *",
+                                        hintText: "Enter Amount in $rupeeSymbol *",
                                         hintStyle: Theme.of(context).textTheme.bodyMedium,
                                         errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                             color: errorColour
                                         ),
-                                        alignLabelWithHint: true,
                                         errorBorder: errorBorder(context),
                                         focusedErrorBorder: errorBorder(context),
                                         focusedBorder: focusedBorder(context),
@@ -143,7 +140,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 2.w,
-                                        vertical: 1.h
                                     ),
                                     decoration: BoxDecoration(
                                       color: whiteColour,
@@ -170,7 +166,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                         errorStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                             color: errorColour
                                         ),
-                                        alignLabelWithHint: true,
                                         errorBorder: errorBorder(context),
                                         focusedErrorBorder: errorBorder(context),
                                         focusedBorder: focusedBorder(context),
@@ -181,8 +176,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                   // category dropdown
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 3.w,
-                                        vertical: 1.5.h
+                                        horizontal: 5.w,
+                                        vertical: 0.5.h
                                     ),
                                     decoration: BoxDecoration(
                                         color: whiteColour,
@@ -190,7 +185,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                     ),
                                     child: DropdownButton<String>(
                                       value: selectedCategory,
-                                      hint: Text('Select expense category',
+                                      hint: Text('Select expense category *',
                                         style: Theme.of(context).textTheme.bodyMedium,),
                                       underline: const SizedBox.shrink(),
                                       isExpanded: true,
@@ -205,7 +200,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                           value: value.name.toString(), // value is a String
                                           child: Text(
                                             value.name.toString(),
-                                            style: Theme.of(context).textTheme.bodyMedium,
+                                            style: Theme.of(context).textTheme.titleMedium,
                                           ),
                                         );
                                       }).toList(),
@@ -227,7 +222,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                        vertical: 2.5.h
+                                        vertical: 1.5.h
                                       ),
                                       child: Text("+ Add new category",
                                       textAlign: TextAlign.end,
@@ -239,8 +234,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                   // expense date
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 3.w,
-                                        vertical: 1.5.h
+                                        horizontal: 5.w,
+                                        vertical: 0.5.h
                                     ),
                                     decoration: BoxDecoration(
                                         color: whiteColour,
@@ -250,8 +245,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                       spacing: 3.w,
                                       children: [
                                         Expanded(
-                                          child: Text(selectedDate ?? "Select date",
-                                            style: Theme.of(context).textTheme.bodyMedium,),
+                                          child: Text(selectedDate ?? "Select date *",
+                                            style: Theme.of(context).textTheme.titleMedium,),
                                         ),
                                         IconButton(
                                             onPressed: (){
@@ -286,16 +281,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   validate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String salary = prefs.getString("salary") ?? "0";
     if(_formKey.currentState!.validate()){
       if(selectedCategory == null){
         errorToastMessage("Select a category", context);
       } else if(selectedDate == null){
         errorToastMessage("Select expense date", context);
+      } else if(salary == "0"){
+        errorToastMessage("Update salary amount to add expense", context);
       } else {
         final expense = Expense(
             amount: double.parse(amountController.text.trim()),
             category: selectedCategory.toString(),
             date: expenseDate!,
+            salary: salary,
             description: descriptionController.text.trim()
         );
         bool result = await expenseService.addNewExpense(expense);

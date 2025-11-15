@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/app_colours.dart';
+import '../../core/constants/app_colours.dart';
 
 OutlineInputBorder focusedBorder(BuildContext context){
   return OutlineInputBorder(

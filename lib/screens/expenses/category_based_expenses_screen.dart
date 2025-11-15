@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../core/constants/app_strings.dart';
 import '../../models/expense_model.dart';
 import '../../services/expense_services.dart';
-import '../../utils/app_colours.dart';
-import '../../utils/app_strings.dart';
+import '../../core/constants/app_colours.dart';
 import 'components/expense_list_item.dart';
 import 'delete_expense_sheet.dart';
 
