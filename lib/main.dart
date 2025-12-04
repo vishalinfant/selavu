@@ -8,6 +8,7 @@ import 'package:selavu/core/routes/app_routes.dart';
 import 'package:selavu/core/theme/app_theme.dart';
 import 'package:selavu/services/notification_service.dart';
 import 'package:sizer/sizer.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'models/expense_model.dart';
 
@@ -43,12 +44,21 @@ class MyApp extends StatelessWidget {
           return Consumer<ThemeNotifier>(
               builder: (context, themeNotifier, child) {
                 return SafeArea(
-                  child: MaterialApp.router(
-                    title: 'Selavu - Expense Tracker',
-                    debugShowCheckedModeBanner: false,
-                    routerConfig: appRouter,
-                    theme: themeNotifier.appTheme,
-                    themeMode: themeNotifier.themeMode,
+                  child: UpgradeAlert(
+                    dialogStyle: UpgradeDialogStyle.material,
+                    upgrader: Upgrader(
+                      debugLogging: true,
+                      minAppVersion: "1.0.2",
+                      debugDisplayAlways: true, // show always (dev only)
+                      debugDisplayOnce: false,   // show only once (dev only)
+                    ),
+                    child: MaterialApp.router(
+                      title: 'Selavu - Expense Tracker',
+                      debugShowCheckedModeBanner: false,
+                      routerConfig: appRouter,
+                      theme: themeNotifier.appTheme,
+                      themeMode: themeNotifier.themeMode,
+                    ),
                   ),
                 );
               }
